@@ -5,7 +5,7 @@ import "./App.scss";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
-import Login from "./pages/Login";
+import Login from "./pages/login/Login";
 
 const App = () => {
   return (

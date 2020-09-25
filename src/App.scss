@@ -1,4 +1,4 @@
-body{
+body {
   height: 100%;
   overflow-y: hidden;
   background-color: #f8f8f8;
@@ -16,10 +16,41 @@ body{
   color: #1890ff;
 }
 
-.logo {
-  height: 32px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 16px;
+.brand {
+  z-index: 1;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  box-shadow: 0 1px 9px -3px rgba(0, 0, 0, 0.2);
+
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 36px;
+      margin-right: 8px;
+    }
+
+    h1 {
+      vertical-align: text-bottom;
+      font-size: 16px;
+      text-transform: uppercase;
+      display: inline-block;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      margin-bottom: 0;
+
+      :local {
+        animation: fadeRightIn 300ms ease-in-out;
+        animation-fill-mode: both;
+      }
+    }
+  }
 }
 
 .site-layout {
