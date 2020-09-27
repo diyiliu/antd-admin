@@ -4,15 +4,15 @@ import "./App.scss";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/login/Login";
+import MainContainer from "./components/container/MainContainer";
 
 const App = () => {
   return (
     <Router>
       <Switch>
         <Route exact path="/login" component={Login} />
-        <MainLayout />
+        <MainContainer />
       </Switch>
     </Router>
   );
