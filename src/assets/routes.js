@@ -16,7 +16,7 @@ export default [
   { path: "/truck/list", name: "Truck", component: Truck },
   { path: "/truck/add", name: "TruckAdd", component: TruckAdd },
 
-  { path: "/sys", name: "System", component: Home , exact: true},
+  { path: "/sys", name: "System", component: SysUser , exact: true},
   { path: "/sys/user", name: "SysUser", component: SysUser },
   { path: "/sys/role", name: "SysRole", component: SysRole },
 ];

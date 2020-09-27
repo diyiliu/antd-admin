@@ -12,12 +12,12 @@ const MainProvider = (props) => {
   const getMenu = (path) => {
     const mList = menus.length ? menus : menuList;
     const menu = mList.find((m) => m.url === path || path.startsWith(m.url));
-  
+
     return menu || mList[0];
   };
 
   return (
-    <MainContext.Provider value={{ menus: menus, getMenu: getMenu }}>
+    <MainContext.Provider value={{ menus, getMenu }}>
       {props.children}
     </MainContext.Provider>
   );

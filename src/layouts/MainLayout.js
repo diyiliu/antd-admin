@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Layout, Menu } from "antd";
 import { Route, Link, useLocation } from "react-router-dom";
-import Iconant from "../components/Iconant";
+import Iconant from "../components/icon/Iconant";
+import Bread from "../components/Bread";
 import { MainContext } from "../useContext";
 
 import routes from "../assets/routes";
@@ -14,6 +15,7 @@ const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selecteds, setSelecteds] = useState([]);
   const [opens, setOpens] = useState([]);
+  const [crumbs, setCrumbs] = useState([]);
 
   const context = useContext(MainContext);
   const { menus, getMenu } = context;
@@ -22,16 +24,28 @@ const MainLayout = () => {
   useEffect(() => {
     const { pathname } = location;
     const menu = getMenu(pathname);
-    const { name, url, children } = menu;
-    if (pathname === url) {
-      setSelecteds([name]);
-    }
+    const { name, children } = menu;
 
     if (children) {
       setOpens([name]);
       const child = children.find((c) => pathname === c.url) || children[0];
       setSelecteds([child.name]);
+
+      setCrumbs([
+        { name: "首页", url: "/" },
+        { name, url: menu.url },
+        { name: child.name },
+      ]);
+    } else {
+      setSelecteds([name]);
+
+      if ("首页" === name) {
+        setCrumbs([{ name: "首页" }]);
+      } else {
+        setCrumbs([{ name: "首页", url: "/" }, { name }]);
+      }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
@@ -109,6 +123,7 @@ const MainLayout = () => {
 
         <Layout>
           <Content className="content">
+            <Bread crumbs={crumbs} />
             <React.Suspense fallback={<div>ABC</div>}>
               {routes.map((route, index) => {
                 const { name, path, exact, component } = route;
