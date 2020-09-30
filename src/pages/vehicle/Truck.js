@@ -1,0 +1,152 @@
+import React, { useState, useEffect } from "react";
+import { Table, Tag, Space } from "antd";
+import Page from "../../components/page/Page";
+import PageHead from "../../components/page/PageHead";
+import notice from "../../utils/notice";
+
+import { vehList, vehSave } from "../../utils/api/veh";
+
+const Truck = () => {
+  const columns = [
+    {
+      title: "编号",
+      dataIndex: "vehNo",
+      render: (text) => <a href="/#">{text}</a>,
+    },
+    {
+      title: "型号",
+      dataIndex: "mode",
+    },
+    {
+      title: "制造商",
+      dataIndex: "factory",
+    },
+    {
+      title: "状态",
+      dataIndex: "status",
+      render: (status) => statusFormat(status),
+    },
+    {
+      title: "操作",
+      render: (text, record) => (
+        <Space size="middle">
+          <a href="/#">Invite {record.id}</a>
+          <a href="/#">Delete</a>
+        </Space>
+      ),
+    },
+  ];
+  const statusFormat = (s) => {
+    let o = { color: "green", text: "正常" };
+    if (s === 0) {
+      o = { color: "volcano", text: "停用" };
+    }
+    const { color, text } = o;
+    return <Tag color={color}>{text}</Tag>;
+  };
+
+  const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
+  // const [sort, setSort] = useState([]);
+  const [param, setParam] = useState({ ...pagination, sort: [], criteria: {} });
+
+  useEffect(() => {
+    fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [param]);
+
+  const doSearch = (values) => {
+    const { search } = values;
+    setParam({ ...param, criteria: { search } });
+  };
+
+  const fetch = () => {
+    const data = { ...param };
+    vehList(data).then((res) => {
+      const { content } = res;
+      setData(content.data);
+
+      const { page, size, total } = content;
+      setPagination({
+        page,
+        size,
+        total,
+      });
+    });
+  };
+
+  const save = (params) => {
+    let { status = 0 } = params;
+    if (status) {
+      status = 1;
+    }
+
+    vehSave({ ...params, status }).then((res) => {
+      const { success, message } = res;
+      if (success) {
+        notice.open({});
+        setParam({ ...param, criteria: {} });
+        fetch();
+      } else {
+        notice.open({ type: "error", title: "操作失败", message });
+      }
+    });
+  };
+
+  const modalItem = {
+    title: "车辆",
+    type: "create",
+    fields: [
+      {
+        label: "编号",
+        name: "vehNo",
+        type: "text",
+      },
+      {
+        label: "型号",
+        name: "mode",
+        type: "select",
+        options: [
+          {
+            name: "XDE120",
+            value: "XDE120",
+          },
+          {
+            name: "XE1300C",
+            value: "XE1300C",
+          },
+        ],
+      },
+      {
+        label: "制造商",
+        name: "factory",
+        type: "text",
+      },
+      {
+        label: "状态",
+        name: "status",
+        type: "switch",
+      },
+    ],
+    save,
+  };
+
+  return (
+    <Page>
+      <PageHead submit={doSearch} item={modalItem} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          current: pagination["page"],
+          pageSize: pagination["size"],
+          total: pagination["total"],
+        }}
+        rowKey="id"
+        size={"middle"}
+      />
+    </Page>
+  );
+};
+
+export default Truck;

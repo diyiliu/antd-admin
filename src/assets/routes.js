@@ -2,8 +2,8 @@ import { lazy } from "react";
 
 const Home = lazy(() => import("../pages/home/Home"));
 
-const Truck = lazy(() => import("../pages/truck/Truck"));
-const TruckAdd = lazy(() => import("../pages/truck/TruckAdd"));
+const Truck = lazy(() => import("../pages/vehicle/Truck"));
+const TruckAdd = lazy(() => import("../pages/vehicle/TruckAdd"));
 
 const SysUser = lazy(() => import("../pages/system/User"));
 const SysRole = lazy(() => import("../pages/system/Role"));

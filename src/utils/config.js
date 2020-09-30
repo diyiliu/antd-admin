@@ -1,4 +1,5 @@
 export default {
-  siteName: 'Ant Admin',
-  logoPath: "/logo.svg"
+  siteName: "Antd Admin",
+  logoPath: "/logo.svg",
+  baseUrl: "http://localhost:8080"
 };

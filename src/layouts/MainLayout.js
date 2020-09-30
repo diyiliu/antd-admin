@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Layout, Menu } from "antd";
 import { Route, Link, useLocation } from "react-router-dom";
 import Iconant from "../components/icon/Iconant";
-import Bread from "../components/Bread";
+import Bread from "../components/bread/Bread";
 import { MainContext } from "../useContext";
 
 import routes from "../assets/routes";
