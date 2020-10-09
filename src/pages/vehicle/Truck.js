@@ -82,6 +82,8 @@ const Truck = () => {
     let { status = 0 } = params;
     if (status) {
       status = 1;
+    } else {
+      // status = 0;
     }
 
     let data = { ...params, status };
@@ -145,6 +147,7 @@ const Truck = () => {
   };
 
   const [modalItem, setModalItem] = useState(initialModal);
+  const [loading, setLoading] = useState(true);
   const [dataList, setDataList] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
   // const [sort, setSort] = useState([]);
@@ -155,14 +158,21 @@ const Truck = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [param]);
 
+  const changePage = (page, filters, sorter) => {
+    setParam({ ...param, page });
+  };
+
   const doSearch = (values) => {
     const { search } = values;
     setParam({ ...param, criteria: { search } });
   };
 
   const fetch = () => {
+    setLoading(true);
     const data = { ...param };
     vehList(data).then((res) => {
+      setLoading(false);
+
       const { content } = res;
       setDataList(content.data);
 
@@ -208,8 +218,10 @@ const Truck = () => {
       />
       <Table
         columns={columns}
+        loading={loading}
         dataSource={dataList}
         pagination={{
+          onChange: changePage,
           current: pagination["page"],
           pageSize: pagination["size"],
           total: pagination["total"],

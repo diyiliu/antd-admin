@@ -35,8 +35,8 @@ service.interceptors.response.use(
     try {
       const { status } = error.response;
       if (status === 400 || status === 401) {
-        const { message } = error.response.data;
-        message.error(`请求失败: ${message}`);
+        const msg = error.response.data.message;
+        message.error(`请求失败: ${msg}`);
       }
       return Promise.reject(error);
     } catch (e) {

@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Row, Col } from "antd";
 import Iconant from "../icon/Iconant";
-import PageModal from "./PageModal";
 
-const PageHead = ({ submit, item }) => {
+const PageHead = ({ submit, addItem }) => {
   const [form] = Form.useForm();
 
   const [expand, setExpand] = useState(false);
-  const [showMl, setShowMl] = useState(false);
 
   const onReset = () => {
     form.resetFields();
-    submit({search: ''});
+    submit({ search: "" });
   };
 
   return (
@@ -53,7 +51,7 @@ const PageHead = ({ submit, item }) => {
               className="btn-danger"
               htmlType="button"
               icon={<Iconant type="PlusCircleOutlined" />}
-              onClick={() => setShowMl(true)}
+              onClick={addItem}
             >
               新增
             </Button>
@@ -68,7 +66,6 @@ const PageHead = ({ submit, item }) => {
           </Col>
         </Row>
       )}
-      <PageModal visible={showMl} setVisible={setShowMl} {...item} />
     </div>
   );
 };

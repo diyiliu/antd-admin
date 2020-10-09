@@ -64,6 +64,7 @@ const PageModal = ({ visible, setVisible, ...item }) => {
 
   return (
     <Modal
+      getContainer={false}
       title={"create" === type ? "新增" + title : "修改" + title}
       visible={visible}
       onOk={handleOk}
