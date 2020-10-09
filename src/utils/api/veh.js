@@ -15,3 +15,17 @@ export const vehSave = (data) => {
     data,
   });
 };
+
+export const vehDel = (data) => {
+  return request({
+    url: `/veh/${data}`,
+    method: "delete"
+  });
+};
+
+export const vehGet = (data) => {
+  return request({
+    url: `/veh/${data}`,
+    method: "get"
+  });
+};

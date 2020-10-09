@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Form, Input, Select, Switch } from "antd";
 
 const PageModal = ({ visible, setVisible, ...item }) => {
-  const { title, type, fields = [], save } = item;
+  const { title, type, fields = [], values = {}, save } = item;
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if ("update" === type) {
+      form.setFieldsValue(values);
+    } else {
+      form.resetFields();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item]);
 
   const onFinish = (values) => {
     save(values);
@@ -62,7 +71,7 @@ const PageModal = ({ visible, setVisible, ...item }) => {
       okText="保存"
       cancelText="取消"
     >
-      <Form {...layout} form={form} onFinish={onFinish}>
+      <Form form={form} {...layout} onFinish={onFinish}>
         {fields.map((field, index) => {
           const { name, label, type } = field;
           let props = {

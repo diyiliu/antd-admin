@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Space } from "antd";
+import { Table, Tag, Space, Button, Popconfirm } from "antd";
+import Iconant from "../../components/icon/Iconant";
 import Page from "../../components/page/Page";
 import PageHead from "../../components/page/PageHead";
+import PageModal from "../../components/page/PageModal";
 import notice from "../../utils/notice";
 
-import { vehList, vehSave } from "../../utils/api/veh";
+import { vehList, vehSave, vehDel, vehGet } from "../../utils/api/veh";
 
 const Truck = () => {
   const columns = [
@@ -29,9 +31,28 @@ const Truck = () => {
     {
       title: "操作",
       render: (text, record) => (
-        <Space size="middle">
-          <a href="/#">Invite {record.id}</a>
-          <a href="/#">Delete</a>
+        <Space>
+          <Button
+            type="link"
+            icon={<Iconant type="EditOutlined" />}
+            onClick={() => {
+              toUpdate(record.id);
+            }}
+          />
+          <Popconfirm
+            title="你确定要删除吗?"
+            onConfirm={() => {
+              doDel(record.id);
+            }}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button
+              type="link"
+              danger
+              icon={<Iconant type="DeleteOutlined" />}
+            />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -45,33 +66,15 @@ const Truck = () => {
     return <Tag color={color}>{text}</Tag>;
   };
 
-  const [data, setData] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
-  // const [sort, setSort] = useState([]);
-  const [param, setParam] = useState({ ...pagination, sort: [], criteria: {} });
-
-  useEffect(() => {
-    fetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [param]);
-
-  const doSearch = (values) => {
-    const { search } = values;
-    setParam({ ...param, criteria: { search } });
-  };
-
-  const fetch = () => {
-    const data = { ...param };
-    vehList(data).then((res) => {
-      const { content } = res;
-      setData(content.data);
-
-      const { page, size, total } = content;
-      setPagination({
-        page,
-        size,
-        total,
-      });
+  const doDel = (id) => {
+    vehDel(id).then((res) => {
+      const { success, message } = res;
+      if (success) {
+        notice.open({});
+        doSearch({});
+      } else {
+        notice.open({ type: "error", title: "操作失败", message });
+      }
     });
   };
 
@@ -81,7 +84,15 @@ const Truck = () => {
       status = 1;
     }
 
-    vehSave({ ...params, status }).then((res) => {
+    let data = { ...params, status };
+
+    const { values } = modalItem;
+    const { id } = values;
+    if (id) {
+      data = { ...data, id };
+    }
+
+    vehSave(data).then((res) => {
       const { success, message } = res;
       if (success) {
         notice.open({});
@@ -93,7 +104,7 @@ const Truck = () => {
     });
   };
 
-  const modalItem = {
+  const initialModal = {
     title: "车辆",
     type: "create",
     fields: [
@@ -128,15 +139,76 @@ const Truck = () => {
         type: "switch",
       },
     ],
+    values: {},
+    showModal: false,
     save,
+  };
+
+  const [modalItem, setModalItem] = useState(initialModal);
+  const [dataList, setDataList] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
+  // const [sort, setSort] = useState([]);
+  const [param, setParam] = useState({ ...pagination, sort: [], criteria: {} });
+
+  useEffect(() => {
+    fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [param]);
+
+  const doSearch = (values) => {
+    const { search } = values;
+    setParam({ ...param, criteria: { search } });
+  };
+
+  const fetch = () => {
+    const data = { ...param };
+    vehList(data).then((res) => {
+      const { content } = res;
+      setDataList(content.data);
+
+      const { page, size, total } = content;
+      setPagination({
+        page,
+        size,
+        total,
+      });
+    });
+  };
+
+  const toAdd = () => {
+    setModalItem({
+      ...initialModal,
+      showModal: "true",
+    });
+  };
+
+  const toUpdate = (id) => {
+    vehGet(id).then((res) => {
+      const { success, content } = res;
+      if (success) {
+        setModalItem({
+          ...initialModal,
+          type: "update",
+          showModal: "true",
+          values: content,
+        });
+      }
+    });
   };
 
   return (
     <Page>
-      <PageHead submit={doSearch} item={modalItem} />
+      <PageHead submit={doSearch} addItem={toAdd} />
+      <PageModal
+        visible={modalItem.showModal}
+        setVisible={() => {
+          setModalItem({ ...initialModal });
+        }}
+        {...modalItem}
+      />
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={dataList}
         pagination={{
           current: pagination["page"],
           pageSize: pagination["size"],
