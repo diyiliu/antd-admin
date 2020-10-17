@@ -16,16 +16,24 @@ export const vehSave = (data) => {
   });
 };
 
+export const vehRemove = (data) => {
+  return request({
+    url: "/veh/remove",
+    method: "post",
+    data,
+  });
+};
+
 export const vehDel = (data) => {
   return request({
     url: `/veh/${data}`,
-    method: "delete"
+    method: "delete",
   });
 };
 
 export const vehGet = (data) => {
   return request({
     url: `/veh/${data}`,
-    method: "get"
+    method: "get",
   });
 };

@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { TableContext } from "./tableContext";
 import { Form, Input, Button, Row, Col } from "antd";
 import Iconant from "../icon/Iconant";
 
-const PageHead = ({ submit, addItem }) => {
+const TableHead = () => {
+  const context = useContext(TableContext);
+  const { setQuery, toAdd } = context;
   const [form] = Form.useForm();
 
   const [expand, setExpand] = useState(false);
 
   const onReset = () => {
     form.resetFields();
-    submit({ search: "" });
+    setQuery();
   };
 
   return (
     <div className="page-head">
-      <Form form={form} onFinish={submit}>
+      <Form form={form} onFinish={setQuery}>
         <Row justify="space-between">
           <Col span={16}>
             <Form.Item name="search">
@@ -51,7 +54,7 @@ const PageHead = ({ submit, addItem }) => {
               className="btn-danger"
               htmlType="button"
               icon={<Iconant type="PlusCircleOutlined" />}
-              onClick={addItem}
+              onClick={toAdd}
             >
               新增
             </Button>
@@ -70,4 +73,4 @@ const PageHead = ({ submit, addItem }) => {
   );
 };
 
-export default PageHead;
+export default TableHead;

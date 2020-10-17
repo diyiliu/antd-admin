@@ -8,7 +8,7 @@ const openNotification = (type, title, message) => {
 };
 
 class Notice {
-  static open(props) {
+  static open(props = {}) {
     const { type = "success", title = "操作成功", message = "" } = props;
     openNotification(type, title, message);
   }

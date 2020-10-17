@@ -2,7 +2,7 @@ import React from "react";
 import { withMainConsumer } from "../../useContext";
 import MainLayout from "../../layouts/MainLayout";
 
-const MainContainer = ({ context }) => {
+const MainContainer = () => {
   return <MainLayout />;
 };
 

@@ -1,18 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { TableContext } from "./tableContext";
 import { Modal, Form, Input, Select, Switch } from "antd";
 
-const PageModal = ({ visible, setVisible, ...item }) => {
-  const { title, type, fields = [], values = {}, save } = item;
+const TableModal = ({ title, fields = [] }) => {
+  const context = useContext(TableContext);
+  const { showModal, setShowModal, values, modalType, save } = context;
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if ("update" === type) {
+    if ("update" === modalType) {
       form.setFieldsValue(values);
     } else {
       form.resetFields();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item]);
+  }, [values]);
 
   const onFinish = (values) => {
     save(values);
@@ -20,11 +22,11 @@ const PageModal = ({ visible, setVisible, ...item }) => {
 
   const handleOk = (e) => {
     form.submit();
-    setVisible(false);
+    setShowModal(false);
   };
 
   const handleCancel = (e) => {
-    setVisible(false);
+    setShowModal(false);
     // form.resetFields();
   };
 
@@ -65,8 +67,8 @@ const PageModal = ({ visible, setVisible, ...item }) => {
   return (
     <Modal
       getContainer={false}
-      title={"create" === type ? "新增" + title : "修改" + title}
-      visible={visible}
+      title={"create" === modalType ? "新增" + title : "修改" + title}
+      visible={showModal}
       onOk={handleOk}
       onCancel={handleCancel}
       okText="保存"
@@ -90,4 +92,4 @@ const PageModal = ({ visible, setVisible, ...item }) => {
   );
 };
 
-export default PageModal;
+export default TableModal;
