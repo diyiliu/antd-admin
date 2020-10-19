@@ -18,7 +18,7 @@ const TablePage = ({ item, crud, context }) => {
     remove,
   } = context;
   const { page, size, total } = pagination;
-  const { columns, fields, title, hooks, options } = item;
+  const { columns, fields, title, hooks = {}, options = {} } = item;
 
   useEffect(() => {
     setCrud(crud);

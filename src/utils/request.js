@@ -34,7 +34,7 @@ service.interceptors.response.use(
   (error) => {
     try {
       const { status } = error.response;
-      if (status === 400 || status === 401) {
+      if (status === 400 || status === 401 || status === 404) {
         const msg = error.response.data.message;
         message.error(`请求失败: ${msg}`);
       }
