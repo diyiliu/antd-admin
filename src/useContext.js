@@ -1,23 +1,51 @@
 import React, { useState, useEffect } from "react";
-import menuList from "./assets/menus";
+
+import { treeAssets } from "./utils/api/menu";
+import routes from "./assets/routes";
 
 const MainContext = React.createContext({});
 const MainProvider = (props) => {
   const [menus, setMenus] = useState([]);
 
   useEffect(() => {
-    setMenus(menuList);
+    const getPath = (name) => {
+      const route = routes.find((r) => r.name === name && r.path !== "/");
+      if (route) {
+        const { path } = route;
+        return path;
+      }
+      return "/";
+    };
+
+    const buildMenus = (list) => {
+      const menus = list.map((i) => {
+        const { name, code, icon, permission, children, hidden } = i;
+        const url = getPath(code);
+        const menu = { name, url, permission, hidden };
+        if (icon) {
+          menu.icon = icon;
+        }
+        if (children) {
+          menu.children = buildMenus(children);
+        }
+
+        return menu;
+      });
+
+      return menus;
+    };
+
+    treeAssets().then((res) => {
+      const { success, content } = res;
+      if (success) {
+        const items = buildMenus(content);
+        setMenus(items);
+      }
+    });
   }, []);
 
-  const getMenu = (path) => {
-    const mList = menus.length ? menus : menuList;
-    const menu = mList.find((m) => m.url === path || path.startsWith(m.url));
-
-    return menu || mList[0];
-  };
-
   return (
-    <MainContext.Provider value={{ menus, getMenu }}>
+    <MainContext.Provider value={{ menus }}>
       {props.children}
     </MainContext.Provider>
   );

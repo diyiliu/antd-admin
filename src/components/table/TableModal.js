@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { TableContext } from "./tableContext";
-import { Modal, Form, Input, Select, Switch } from "antd";
+import { Modal, Form, Input, InputNumber, Select, Switch, TreeSelect } from "antd";
 
 const TableModal = ({ title, fields = [] }) => {
   const context = useContext(TableContext);
@@ -37,7 +37,16 @@ const TableModal = ({ title, fields = [] }) => {
 
   const formIn = (type, field) => {
     if ("text" === type) {
+      const { editable = true } = field;
+      if ("update" === modalType && !editable) {
+        return <Input disabled />;
+      }
+
       return <Input />;
+    }
+
+    if ("number" === type) {
+      return <InputNumber />;
     }
 
     if ("textarea" === type) {
@@ -49,9 +58,10 @@ const TableModal = ({ title, fields = [] }) => {
     }
 
     if ("select" === type) {
-      const { options = [] } = field;
+      const { options = [], property = {} } = field;
+
       return (
-        <Select>
+        <Select {...property}>
           {options.map((o) => {
             return (
               <Select.Option key={o.name} value={o.value}>
@@ -60,6 +70,13 @@ const TableModal = ({ title, fields = [] }) => {
             );
           })}
         </Select>
+      );
+    }
+
+    if ("treeSelect" === type) {
+      const { property = {} } = field;
+      return (
+        <TreeSelect {...property}/>
       );
     }
   };

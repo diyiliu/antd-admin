@@ -25,6 +25,31 @@ const User = () => {
       dataIndex: "email",
     },
     {
+      title: "角色",
+      dataIndex: "roleIds",
+      render: (tags) => (
+        <>
+          {tags.map((v, i) => {
+            // let color =  'geekblue','green','volcano';
+            const { roles } = dict;
+            if (roles) {
+              const role = roles.find((r) => r.value === v);
+              return (
+                <Tag color={"geekblue"} key={i}>
+                  {role.name}
+                </Tag>
+              );
+            }
+            return (
+              <Tag color={"geekblue"} key={i}>
+                {"未知"}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
       title: "状态",
       dataIndex: "status",
       render: (status) => {
@@ -36,18 +61,23 @@ const User = () => {
         return <Tag color={color}>{text}</Tag>;
       },
     },
+    {
+      title: "创建时间",
+      dataIndex: "createTime",
+    },
   ];
 
   const initFields = async () => {
     const res = await allRoles();
     const { success, content, message } = res;
 
-    let roles = []
+    let roles = [];
     if (success) {
-      roles = content.map(r => {
-        const {id, name} = r;
-        return {name, value: id}
+      roles = content.map((r) => {
+        const { id, name } = r;
+        return { name, value: id };
       });
+      setDict({ ...dict, roles });
     } else {
       Notice.open({ type: "error", title: "数据初始化失败", message });
     }
@@ -57,6 +87,7 @@ const User = () => {
         label: "用户名",
         name: "username",
         type: "text",
+        editable: false,
       },
       {
         label: "姓名",
@@ -77,7 +108,10 @@ const User = () => {
         label: "角色",
         name: "roles",
         type: "select",
-        options: roles
+        property: {
+          mode: "multiple",
+        },
+        options: roles,
       },
       {
         label: "状态",
@@ -90,8 +124,11 @@ const User = () => {
   };
 
   const [fields, setFields] = useState([]);
+  const [dict, setDict] = useState({});
+
   useEffect(() => {
     initFields();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hooks = {
@@ -103,14 +140,18 @@ const User = () => {
       return {};
     },
     beforeSave: (params) => {
-      let { status } = params;
+      let { status, roles } = params;
       if (status) {
         status = 1;
       } else {
         status = 0;
       }
 
-      return { ...params, status };
+      return { ...params, status, roleIds: roles };
+    },
+    afterToEdit: (params) => {
+      const { roleIds } = params;
+      return { ...params, roles: roleIds };
     },
   };
 

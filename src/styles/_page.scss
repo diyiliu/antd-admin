@@ -3,7 +3,7 @@
   padding: 1.2rem;
   background: #fff;
 
-  .page-head{
+  .page-head {
     margin-bottom: 1rem;
 
     .btn-group {
@@ -12,4 +12,14 @@
       justify-content: space-between;
     }
   }
+}
+
+.load-page {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.05);
+
+  min-height: calc(100% - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

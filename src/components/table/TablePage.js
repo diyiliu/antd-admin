@@ -11,18 +11,27 @@ const TablePage = ({ item, crud, context }) => {
     list,
     loading,
     pagination,
+    setPagination,
     pageChange,
     setCrud,
-    setHooks,
+    setHook,
     toEdit,
     remove,
   } = context;
-  const { page, size, total } = pagination;
-  const { columns, fields, title, hooks = {}, options = {} } = item;
+
+  const {
+    columns,
+    fields,
+    title,
+    hooks = {},
+    options = {},
+    paging = {}
+  } = item;
 
   useEffect(() => {
     setCrud(crud);
-    setHooks(hooks);
+    setHook(hooks);
+    setPagination({ ...pagination, ...paging });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -75,23 +84,33 @@ const TablePage = ({ item, crud, context }) => {
     return [...columns, column];
   };
 
+  const initPage = () => {
+    const { page, size, total, hideSingle } = pagination;
+
+    return {
+      hideOnSinglePage: hideSingle,
+      onChange: pageChange,
+      current: page,
+      pageSize: size,
+      total: total,
+    };
+  };
+
   return (
     <div className="ant-page">
       <TableModal {...modalItem} />
       <TableHead />
-      <Table
-        columns={initColumns(columns, options)}
-        loading={loading}
-        dataSource={list}
-        rowKey="id"
-        size={"middle"}
-        pagination={{
-          onChange: pageChange,
-          current: page,
-          pageSize: size,
-          total: total,
-        }}
-      />
+      {list.length > 0 && (
+        <Table
+          defaultExpandAllRows={true}
+          columns={initColumns(columns, options)}
+          loading={loading}
+          dataSource={list}
+          rowKey="id"
+          size={"middle"}
+          pagination={initPage()}
+        />
+      )}
     </div>
   );
 };

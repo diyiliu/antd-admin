@@ -8,7 +8,12 @@ const TableProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState([]);
 
-  const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    size: 10,
+    total: 0,
+    hideSingle: true,
+  });
   const [query, setQuery] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
@@ -16,21 +21,26 @@ const TableProvider = (props) => {
   const [values, setValues] = useState({});
 
   const [hooks, setHooks] = useState({
+    init: () => {
+    },
     beforeQuery: (query) => {
       return { ...query };
     },
     beforeSave: (params) => {
       return { ...params };
     },
+    afterToEdit: (params) => {
+      return { ...params };
+    },
   });
 
+  const { page } = pagination;
   useEffect(() => {
     if (crud) {
       doQuery();
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [crud, query]);
+  }, [crud, query, page]);
 
   const pageChange = (current, filters, sorter) => {
     setPagination({ ...pagination, page: current });
@@ -44,24 +54,27 @@ const TableProvider = (props) => {
 
   const toEdit = (id) => {
     crud.get(id).then((res) => {
-      const { success, content } = res;
+      const { success, content, message } = res;
       if (success) {
         setShowModal(true);
         setModalType("update");
-        setValues(content);
+        setValues(hooks.afterToEdit(content));
+      } else {
+        Notice.open({ type: "error", title: "操作失败", message });
       }
     });
   };
 
   const doQuery = () => {
     setLoading(true);
-    const params = { criteria: hooks.beforeQuery(query), ...pagination };
+    const { page, size } = pagination;
+    const params = { criteria: hooks.beforeQuery(query), page, size };
     crud.fetch(params).then((res) => {
       setLoading(false);
       const { content } = res;
       setList(content.data);
       const { page, size, total } = content;
-      setPagination({ page, size, total });
+      setPagination({ ...pagination, page, size, total });
     });
   };
 
@@ -71,11 +84,14 @@ const TableProvider = (props) => {
     if (id) {
       data = { ...data, id };
     }
+
     crud.save(data).then((res) => {
       const { success, message } = res;
       if (success) {
+        setValues({});
         Notice.open();
         doQuery();
+        hooks.init();
       } else {
         Notice.open({ type: "error", title: "操作失败", message });
       }
@@ -100,6 +116,7 @@ const TableProvider = (props) => {
         list,
         loading,
         pagination,
+        setPagination,
         pageChange,
         setCrud,
         setQuery,
@@ -107,7 +124,9 @@ const TableProvider = (props) => {
         toEdit,
         save,
         remove,
-        setHooks,
+        setHook: (params) => {
+          setHooks({ ...hooks, ...params });
+        },
         showModal,
         setShowModal,
         modalType,

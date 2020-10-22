@@ -7,16 +7,18 @@ const TruckAdd = lazy(() => import("../pages/vehicle/TruckAdd"));
 
 const SysUser = lazy(() => import("../pages/system/User"));
 const SysRole = lazy(() => import("../pages/system/Role"));
+const SysMenu = lazy(() => import("../pages/system/Menu"));
 
 export default [
-  { path: "/", name: "Home", exact: true },
-  { path: "/home", name: "Home", component: Home },
+  { path: "/", name: "home", component: Home, exact: true },
+  { path: "/home", name: "home", component: Home },
 
-  { path: "/truck", name: "Truck", component: Truck , exact: true},
-  { path: "/truck/list", name: "Truck", component: Truck },
-  { path: "/truck/add", name: "TruckAdd", component: TruckAdd },
+  { path: "/truck", name: "truck", component: Truck, exact: true },
+  { path: "/truck/list", name: "truckList", component: Truck },
+  { path: "/truck/add", name: "truckAdd", component: TruckAdd },
 
-  { path: "/sys", name: "System", component: SysUser , exact: true},
-  { path: "/sys/user", name: "SysUser", component: SysUser },
-  { path: "/sys/role", name: "SysRole", component: SysRole },
+  { path: "/sys", name: "system", component: SysUser, exact: true },
+  { path: "/sys/user", name: "sysUser", component: SysUser },
+  { path: "/sys/role", name: "sysRole", component: SysRole },
+  { path: "/sys/menu", name: "sysAsset", component: SysMenu },
 ];

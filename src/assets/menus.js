@@ -31,6 +31,10 @@ export default [
             {
                 name: '角色管理',
                 url: '/sys/role'
+            },
+            {
+                name: '菜单管理',
+                url: '/sys/menu'
             }
         ]
     }
