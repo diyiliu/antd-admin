@@ -2,6 +2,8 @@ import axios from "axios";
 import { message } from "antd";
 import config from "./config";
 
+import { getToken, logout } from "./auth";
+
 // 创建axios实例
 const url = config.baseUrl;
 const service = axios.create({
@@ -12,7 +14,12 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers["Authorization"] = "Bearer " + token;
+    }
     config.headers["Content-Type"] = "application/json;charset=utf-8";
+
     return config;
   },
   (error) => {
@@ -34,7 +41,15 @@ service.interceptors.response.use(
   (error) => {
     try {
       const { status } = error.response;
-      if (status === 400 || status === 401 || status === 404) {
+      if (status === 401) {
+        message.error("系统未登录，请重新登录");
+        logout().then(() => {
+          window.location.reload();
+        });
+        return Promise.reject(error);
+      }
+
+      if (status === 403 || status === 404) {
         const msg = error.response.data.message;
         message.error(`请求失败: ${msg}`);
       }

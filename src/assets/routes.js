@@ -10,7 +10,7 @@ const SysRole = lazy(() => import("../pages/system/Role"));
 const SysMenu = lazy(() => import("../pages/system/Menu"));
 
 export default [
-  { path: "/", name: "home", component: Home, exact: true },
+  { path: "/", name: "default", component: Home },
   { path: "/home", name: "home", component: Home },
 
   { path: "/truck", name: "truck", component: Truck, exact: true },

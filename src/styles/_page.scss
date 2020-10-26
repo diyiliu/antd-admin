@@ -14,12 +14,51 @@
   }
 }
 
-.load-page {
-  text-align: center;
-  background: rgba(0, 0, 0, 0.05);
+.loading {
+  width: 100%;
+  height: 100vh;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.load-page {
+  background: rgba(0, 0, 0, 0.05);
   min-height: calc(100% - 72px);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.login-page {
+  position: relative;
+
+  .hero {
+    width: 100%;
+    min-height: 100vh;
+    background: url("../assets/images/login-register.jpg");
+    background-repeat: no-repeat;
+    background-position: center bottom;
+  }
+
+  .wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    background: #fff;
+    padding: 20px;
+
+    .auth-box {
+      .login-form {
+        min-width: 320px;
+
+        .form-submit {
+          width: 100%;
+        }
+      }
+    }
+  }
 }
