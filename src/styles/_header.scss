@@ -1,49 +1,79 @@
-
 .header {
+  position: relative;
+  display: flex;
+  padding: 0;
+
+  .logo {
     position: relative;
-    display: flex;
-    padding: 0;
-  
-    .logo {
-      position: relative;
-      height: 100%;
-      width: 240px;
-  
-      &.condensed {
-        width: 80px;
-      }
-  
-      a {
-        display: flex;
-        height: 100%;
-        justify-content: center;
-        align-items: center;
-  
-        img {
-          width: 36px;
-          margin-right: 8px;
-        }
-  
-        h1 {
-          vertical-align: text-bottom;
-          font-size: 16px;
-          text-transform: uppercase;
-          display: inline-block;
-          font-weight: 700;
-          color: #fff;
-          white-space: nowrap;
-          margin-bottom: 0;
-        }
-      }
+    height: 100%;
+    width: 240px;
+
+    &.condensed {
+      width: 80px;
     }
-  
-    .trigger {
-      font-size: 18px;
-      line-height: 64px;
-      padding: 0 24px;
-      cursor: pointer;
-      transition: color 0.3s;
-      color: #fff;
+
+    a {
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        width: 36px;
+        margin-right: 8px;
+      }
+
+      h1 {
+        vertical-align: text-bottom;
+        font-size: 16px;
+        text-transform: uppercase;
+        display: inline-block;
+        font-weight: 700;
+        color: #fff;
+        white-space: nowrap;
+        margin-bottom: 0;
+      }
     }
   }
-  
+
+  .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+    color: #fff;
+  }
+
+  .topnav-menu {
+    margin: 0;
+    display: flex;
+    float: right;
+    margin-left: auto;
+    margin-right: 10px;
+    overflow: hidden;
+    list-style: none;
+
+    .notice,
+    .user {
+      display: inline-block;
+      line-height: 64px;
+      padding: 0 10px;
+      cursor: pointer;
+    }
+
+    .notice {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .user {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.6);
+
+      .ant-avatar {
+        margin-right: 6px;
+      }
+    }
+  }
+}

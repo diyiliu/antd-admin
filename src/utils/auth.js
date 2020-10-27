@@ -20,11 +20,20 @@ export function removeToken() {
   return Cookies.remove(TOKEN_KEY);
 }
 
+const PATH_PREFIX = "/auth";
+
 export const login = (data) => {
   return request({
-    url: "/login",
+    url: `${PATH_PREFIX}/login`,
     method: "post",
     data,
+  });
+};
+
+export const getUser = () => {
+  return request({
+    url: `${PATH_PREFIX}/user`,
+    method: "get",
   });
 };
 

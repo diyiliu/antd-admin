@@ -1,24 +1,53 @@
-import React from "react";
-import { Form, Input, Button, Checkbox } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Button, Checkbox, Alert } from "antd";
 import Iconant from "components/icon/Iconant";
-import Notice from "utils/notice";
+import Cookies from "js-cookie";
 
 import { MainConsumer } from "useContext";
-import { login } from "utils/auth";
+import { login, setToken } from "utils/auth";
 
 const Login = ({ history }) => {
+  const [error, setError] = useState(null);
+
+  const RE_USER = "reUser";
+  const setCookieUser = (values) => {
+    Cookies.set(RE_USER, values, { expires: 1 });
+  };
+  const removeCookieUser = () => {
+    Cookies.remove(RE_USER);
+  };
+
+  const [loginForm] = Form.useForm();
+  useEffect(() => {
+    const user = Cookies.get(RE_USER);
+    if (user) {
+      const { username, password } = JSON.parse(user);
+      loginForm.setFieldsValue({ username, password });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <MainConsumer>
       {(value) => {
-        const { loginSuccess } = value;
+        const { setUser } = value;
         const onFinish = (values) => {
+          const { remember } = values;
           login(values).then((res) => {
             const { success, content, message } = res;
             if (success) {
-              loginSuccess(content);
+              if (remember) {
+                setCookieUser(values);
+              } else {
+                removeCookieUser();
+              }
+
+              const { token, user } = content;
+              setToken(token);
+              setUser(user);
               history.push("/");
             } else {
-              Notice.open({ type: "error", title: "登录失败", message });
+              setError(message);
             }
           });
         };
@@ -29,10 +58,10 @@ const Login = ({ history }) => {
             <div className="wrapper">
               <div className="auth-box">
                 <Form
-                  name="normal_login"
+                  form={loginForm}
                   className="login-form"
                   initialValues={{
-                    remember: true,
+                    remember: false,
                   }}
                   onFinish={onFinish}
                 >
@@ -95,6 +124,17 @@ const Login = ({ history }) => {
                     </Button>
                   </Form.Item>
                 </Form>
+                {error && (
+                  <Alert
+                    message={error}
+                    type="error"
+                    showIcon
+                    closable
+                    onClose={() => {
+                      setError(null);
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>

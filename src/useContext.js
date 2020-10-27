@@ -3,19 +3,14 @@ import React, { useState, useEffect } from "react";
 import { treeAssets } from "./utils/api/menu";
 import routes from "./assets/routes";
 
-import { getToken, setToken } from "utils/auth";
+import { getToken, getUser } from "utils/auth";
 
 const MainContext = React.createContext({});
 const MainProvider = (props) => {
-  const [menus, setMenus] = useState([]);
-
-  const loginSuccess = (data) => {
-    const { token } = data;
-    setToken(token);
-  };
+  const [menus, setMenus] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-
     const getPath = (name) => {
       const route = routes.find((r) => r.name === name && r.path !== "/");
       if (route) {
@@ -45,6 +40,15 @@ const MainProvider = (props) => {
 
     const token = getToken();
     if (token) {
+      if (!user) {
+        getUser().then((res) => {
+          const { success, content } = res;
+          if (success) {
+            setUser(content);
+          }
+        });
+      }
+
       treeAssets().then((res) => {
         const { success, content } = res;
         if (success) {
@@ -53,10 +57,10 @@ const MainProvider = (props) => {
         }
       });
     }
-  }, []);
+  }, [user]);
 
   return (
-    <MainContext.Provider value={{ menus, loginSuccess }}>
+    <MainContext.Provider value={{ menus, user, setUser }}>
       {props.children}
     </MainContext.Provider>
   );
