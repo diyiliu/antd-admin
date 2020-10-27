@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Spin, ConfigProvider } from "antd";
+import { Layout, Menu, Spin, Dropdown, Avatar, ConfigProvider } from "antd";
 import zhCN from "antd/es/locale/zh_CN";
 import { Route, Link, useLocation } from "react-router-dom";
 import Iconant from "components/icon/Iconant";
@@ -8,21 +8,24 @@ import Bread from "components/bread/Bread";
 import routes from "assets/routes";
 import config from "utils/config";
 
+import { logout } from "utils/auth";
+import UserImg from "assets/images/user.png";
+
 const { SubMenu } = Menu;
 const { Header, Sider, Content } = Layout;
 
-const MainLayout = ({ context }) => {
+const MainLayout = ({ history, context }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [selecteds, setSelecteds] = useState([]);
   const [opens, setOpens] = useState([]);
   const [crumbs, setCrumbs] = useState([]);
 
-  const { menus } = context;
+  const { menus, user } = context;
 
   const location = useLocation();
   const { pathname } = location;
-  useEffect(() => {    
-    if (menus.length > 0) {
+  useEffect(() => {
+    if (menus) {
       const getMenu = (path) => {
         const menu =
           menus.find((m) => m.url === path || path.startsWith(m.url)) ||
@@ -97,6 +100,25 @@ const MainLayout = ({ context }) => {
     );
   };
 
+  const topnav = (
+    <Menu>
+      <Menu.Item>
+        <Iconant type="UserOutlined" /> 个人中心
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        onClick={() => {
+          logout().then(() => {
+            history.push("/login");
+          });
+        }}
+      >
+        <Iconant type="LogoutOutlined" />
+        退出登录
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <ConfigProvider locale={zhCN}>
       <Layout>
@@ -112,7 +134,23 @@ const MainLayout = ({ context }) => {
             <Iconant type="MenuOutlined" />
           </span>
 
-          
+          {user && (
+            <ul className="topnav-menu">
+              <li>
+                <span className="notice">
+                  <Iconant type="BellOutlined" />
+                </span>
+              </li>
+              <li>
+                <Dropdown overlay={topnav}>
+                  <span className="user">
+                    <Avatar size={24} src={UserImg} />
+                    <span>{user.name}</span>
+                  </span>
+                </Dropdown>
+              </li>
+            </ul>
+          )}
         </Header>
         <Layout className="site-layout">
           <Sider
@@ -129,9 +167,10 @@ const MainLayout = ({ context }) => {
               openKeys={opens}
               onOpenChange={openHandle}
             >
-              {menus.map((menu) => {
-                return menuItem(menu);
-              })}
+              {menus &&
+                menus.map((menu) => {
+                  return menuItem(menu);
+                })}
             </Menu>
           </Sider>
 
